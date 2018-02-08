@@ -18,8 +18,8 @@ Mason Today currently supports developers on Linux and macOS systems. Here's our
 walk-through of steps we will take:
 
 1. Install `git` on your system.
-2. Clone the whats-open codebase.
-3. Get whats-open up and running with the method of your choice.
+2. Clone the mason-today-web codebase.
+3. Get mason-today-web up and running with the method of your choice.
 
 ## 1) Install `git` on your system.
 
