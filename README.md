@@ -117,7 +117,7 @@ And finally,
 
     docker stack deploy mason-today_stack -c docker-compose.yml
 
-You should see that the server is running by going to http://localhost:8000
+You should see that the server is running by going to http://localhost:80
 in your browser. Any changes you make to your local file system will be mirrored in the server.
 
 ### Manual Setup
