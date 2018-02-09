@@ -8,7 +8,7 @@ services:
         - mason-today-net 
       ports:
         - '80:8000'
-      command: /bin/sh startprod.sh
+      command: /bin/sh start.sh
 
 networks:
   mason-today-net:
