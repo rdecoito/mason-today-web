@@ -1,29 +1,31 @@
-#print "and we begin"
+"""
+mason-today-web/parscript.py
+
+Scrape data from GMU 25Live and parse it into a dictionary to serve.
+"""
 from bs4 import BeautifulSoup
 from datetime import date, time
 import requests
 
-def cleanup(str): #this function cleans up some of the useless html leftovers to characters we can actually use
-	str = str.replace("&amp;", "&")
-	str = str.replace("&nbsp;", " ")
-	str = str.replace("&ndash;", "-")
-	str = str.replace("&lt;", "<")
-	str = str.replace("&gt;", ">")
-	str = str.replace("<br/>", "\n")
-	str = str.replace("Publish event on the Calendar?: TRUE \n" , "")
-	str = str.replace("Performing any medical procedures?: FALSE \n" , "")
-	str = str.replace("Parking Needed?: FALSE \n" , "")
-	str = str[0:len(str) - 1]
-	return str
+def clean_response(response):
+	"""
+	Clean up some of the useless html leftovers to characters we can actually use
+	"""
+	replacements = [
+		("&amp;", "&"),
+		("&nbsp;", " "),
+		("&ndash;", "-"),
+		("&lt;", "<"),
+		("&gt;", ">"),
+		("<br/>", "\n"),
+		("Publish event on the Calendar?: TRUE \n" , ""),
+		("Performing any medical procedures?: FALSE \n" , ""),
+		("Parking Needed?: FALSE \n" , "")
+	]
 
-class eventException: #this class is just an exception for our use
-
-	def __init__(self,message):
-		self.__message = message
-		#self.__exceptionlist = []
-
-	def __str__(self):
-		return self.__message
+	for replacement in replacements:
+		response.replace(replacement[0], replacement[1])
+	return response[0:len(response) - 1]
 
 def convertTime(stri): #this function is used for splicing the event times.
 	if (stri[-2:] == "pm"): #checks to see if the time presented is pm 
@@ -56,7 +58,7 @@ def convertTime(stri): #this function is used for splicing the event times.
 			except:
 				return int(stri[0]) * 60
 	else:
-		raise eventException("This is weird and please don't happen")
+		raise ValueError("This is weird and please don't happen")
 
 
 def load_data():
@@ -78,7 +80,7 @@ def load_data():
 	notProvide = "Not Provided"
 	counter = 0
 
-	soup = BeautifulSoup(cleanup(requests.get("http://25livepub.collegenet.com/calendars/events_all.xml").text), "lxml") #creates soup of the xml
+	soup = BeautifulSoup(clean_response(requests.get("http://25livepub.collegenet.com/calendars/events_all.xml").text), "lxml") #creates soup of the xml
 	#creates a list of all the entry tags from the xml
 	entries = soup.findAll('entry')
 	#indexs an entry in the list of entries 
@@ -95,7 +97,7 @@ def load_data():
 		entry_content = entry_content.replace("\n\n" , "\n")
 
 		#check clearcontent function
-		entry_content = cleanup(entry_content) #we might just get rid of this one
+		entry_content = clean_response(entry_content) #we might just get rid of this one
 
 		#each piece of content may is seperated by a newline, entry_detailes creates a list 
 		entry_detailes = entry_content.split("\n")
@@ -152,7 +154,7 @@ def load_data():
 					description = entry_detailes[1] + " " + entry_detailes[2]
 				#this will print if the code has failed to account for something in detailes, but it works as of December 26th 2017
 				else:
-					raise eventException("failed to account for detail in entry_detailes when date element is index 0 on entry_detailes list")
+					raise ValueError("failed to account for detail in entry_detailes when date element is index 0 on entry_detailes list")
 
 
 			#see (D) above
@@ -175,11 +177,11 @@ def load_data():
 					description = entry_detailes[2] + " " + entry_detailes[3]
 				#this will print if the code has failed to account for something in detailes
 				else:
-					raise eventException("failed to account for detail in entry_detailes when date element is index 1 on entry_detailes list")
+					raise ValueError("failed to account for detail in entry_detailes when date element is index 1 on entry_detailes list")
 			#this will print if the above if statements failed to find the date block
 			else:
-				raise eventException("failed to find and account for date element in entry_detailes list")
-		except eventException as e:
+				raise ValueError("failed to find and account for date element in entry_detailes list")
+		except ValueError as e:
 			error.append(str(e))
 		except Exception:
 			error.append("Error intialising event")
@@ -224,9 +226,9 @@ def load_data():
 			try:
 				timestop = convertTime(time[1])
 			except ValueError:
-				raise eventException(str(time))
+				raise ValueError(str(time))
 			if timestop == None:
-				raise eventException(str(time))
+				raise ValueError(str(time))
 			if not (time[0][-2:] == "am") and not (time[0][-2:] == "pm"):
 				if (time[1][-2:] == "am"):
 					timestart = convertTime(time[0] + "am")
@@ -255,6 +257,3 @@ def load_data():
 		else:
 			dictlist.append({"id":uniqueid, "error":error})
 	return dictlist
-
-
-#everything in the house is fuzzy, stupid dogs were acting like pollinators, if that's how you even spell it

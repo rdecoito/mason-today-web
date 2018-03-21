@@ -1,7 +1,10 @@
+"""
+"""
 from flask import Flask
 from flask import Response
 from parscript import load_data
 import json
+
 app = Flask(__name__)
 
 @app.route("/")
