@@ -3,10 +3,18 @@ mason-today-web/parscript.py
 
 Run the Flask application to serve json.
 """
-from flask import Flask
-from flask import Response
-from parscript import load_data
+# Future imports
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+# Python std lib imports
 import json
+
+# App imports
+from parscript import load_data
+
+# Third party imports
+from flask import Flask, Response
 
 app = Flask(__name__)
 

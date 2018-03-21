@@ -3,8 +3,15 @@ mason-today-web/parscript.py
 
 Scrape data from GMU 25Live and parse it into a dictionary to serve.
 """
-from bs4 import BeautifulSoup
+# Future imports
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+# Python std. lib imports
 from datetime import date, time
+
+# Third party imports
+from bs4 import BeautifulSoup
 import requests
 
 def clean_response(response):
