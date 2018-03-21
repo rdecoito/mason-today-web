@@ -1,4 +1,7 @@
 """
+mason-today-web/parscript.py
+
+Run the Flask application to serve json.
 """
 from flask import Flask
 from flask import Response
