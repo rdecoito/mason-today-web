@@ -11,7 +11,7 @@ from __future__ import (absolute_import, division, print_function,
 import json
 
 # App imports
-from parscript import load_data
+from .parscript import load_data
 
 # Third party imports
 from flask import Flask, Response
@@ -20,6 +20,6 @@ app = Flask(__name__)
 
 @app.route("/")
 def display_data():
-    resp = Response(json.dumps(load_data(), ensure_ascii=False).encode('utf-8'))
+    resp = Response(json.dumps(load_data(), ensure_ascii=False))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
