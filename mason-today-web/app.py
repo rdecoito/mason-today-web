@@ -11,7 +11,7 @@ from __future__ import (absolute_import, division, print_function,
 import json
 
 # App imports
-from .parscript import load_data
+from .parscript import get_all_events
 
 # Third party imports
 from flask import Flask, Response
