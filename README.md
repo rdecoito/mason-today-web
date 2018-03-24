@@ -2,7 +2,7 @@
 
 Mason Today Web is the backend API of the Mason Today project. 
 
-Currently, the parscript's data is hosted at `masontoday.zosman.com`
+Currently, the parscript's data is hosted at `masontoday.gmu.io`
 
 Please refer to the requirements.txt for information on what packages to
 install to properly run the program.
