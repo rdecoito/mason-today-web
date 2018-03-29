@@ -1,37 +1,28 @@
 import requests
 from bs4 import BeautifulSoup
+from parscript import cleanup, doTheTime
 import feedparser
 
 #TODO: ADD "getconnected" ATTRIBUTE TO LOAD_DATA DICTLIST
 
-def cleanup(str): #this function cleans up some of the useless html leftovers to characters we can actually use
-	str = str.replace("&amp;", "&")
-	str = str.replace("&nbsp;", " ")
-	str = str.replace("&ndash;", "-")
-	str = str.replace("&lt;", "<")
-	str = str.replace("&gt;", ">")
-	str = str.replace("<br/>", "\n")
-	str = str.replace("Publish event on the Calendar?: TRUE \n" , "")
-	str = str.replace("Performing any medical procedures?: FALSE \n" , "")
-	str = str.replace("Parking Needed?: FALSE \n" , "")
-	str = str.replace("&rsquo;", "'")
-	str = str[0:len(str) - 1]
-	return str
 
 #woah = cleanup(requests.get("https://getconnected.gmu.edu/events/events.rss").text)
 #soup = BeautifulSoup(woah, "lxml")
 #print soup.prettify
+feedtext = requests.get("https://getconnected.gmu.edu/events/events.rss").text
+feedtext = cleanup(feedtext)
+feedtext = feedtext.replace("&rsquo;", "'")
 
-feed = feedparser.parse(cleanup(requests.get("https://getconnected.gmu.edu/events/events.rss").text))#this calls the RSS feed parser from !feedparser
+feed = feedparser.parse(feedtext)#this calls the RSS feed parser from !feedparser
 
 #print feed, "\n\n\n"
 #ctr = 0
 dictlist = []
 
 for entry in feed.entries:
-	templist = {}
+	# templist = {}
 	#print entry.summary_detail.value
-	templist["summary_detail"] = entry.summary_detail
+	# templist["summary_detail"] = entry.summary_detail
 
 	'''print "----------------------------------"
 	print "1) ", entry.published_parsed, "\n"
@@ -73,19 +64,44 @@ for entry in feed.entries:
 	
 
 
-	print"==================================="
-	id = entry.id[-7:]
-	print id
+	#print"==================================="
+	uniqueid = entry.id[-7:]
+	#print uniqueid
 
 	title = entry.title
-	print title
-
-	print type(entry.summary_detail["value"])
+	#print title
+	
 	sumdetsoup = BeautifulSoup(entry.summary_detail["value"].encode("ascii", "replace"), "html.parser")
-	print sumdetsoup.prettify()
-	print"==================================="
+	
+	location = [sumdetsoup.div.span.text]
+	#print location
 
+	description = sumdetsoup.find_all("div")[1].p.text
+	#print description
 
+	
+	datetime = sumdetsoup.b.text
+	#print datetime
+	
+	if (datetime.count("(") == 1):
+		datesplit = datetime.split(", ")
+		weekday = datesplit[0]
+		month = datesplit[1].split(" ")
+		monthday = month[1]
+		month = month[0]
+		year = datesplit[2][:5]
+		parsedtimelist = doTheTime(datesplit[2][6:-1])
+		timestart = parsedtimelist[0]
+		timestop = parsedtimelist[1]
+		dictlist.append({"id":uniqueid, "title":title, "dayofweek":weekday, "dayofmonth":monthday, "month":month, "year":year, "timestart":timestart, "timestop":timestop, "location":location, "description":description})		
+
+print dictlist
+
+	
+	#print "\n\n", sumdetsoup.prettify()
+	#print"==================================="
+
+#dictlist.append({"id":uniqueid, "title":entry_title, "dayofweek":weekday, "dayofmonth":monthday, "month":month, "year":year, "timestart":timestart, "timestop":timestop, "location":location, "description":description})
 #This was intended to figure out what objects are in each entry and what appears only sometimes
 #The results are:
 ####Every event has:
