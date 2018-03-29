@@ -26,7 +26,7 @@ class eventException: #this class is just an exception for our use
 		return self.__message
 
 def convertTime(stri): #this function is used for splicing the event times.
-	if (stri[-2:] == "pm"): #checks to see if the time presented is pm 
+	if (stri[-2:] == "pm" or stri[-2:] == "PM"]): #checks to see if the time presented is pm 
 		if not ((stri[0] == "1") and (stri[1] == "2")): #if the time is pm, then the 12:00 hour is noon and shouldn't get 12 added to it
 				try: #this try block works with the exception handler to add 12 to any pm times
 					stri = stri.replace(stri[0:2], str(int(stri[0:2]) + 12), 1)
@@ -44,7 +44,7 @@ def convertTime(stri): #this function is used for splicing the event times.
 				return (int(stri[0:2])) * 60
 			except:
 				return (int(stri[0])) * 60
-	elif (stri[-2:] == "am"): #checks if the time presented is am, and executes identical code from the pm block, just without adding 12
+	elif (stri[-2:] == "am" or stri[-2:] == "AM"): #checks if the time presented is am, and executes identical code from the pm block, just without adding 12
 		if ":" in stri:
 			try:
 				return (int(stri[0:2]) * 60) + int(stri[3:5])
