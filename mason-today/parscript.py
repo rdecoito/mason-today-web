@@ -14,6 +14,7 @@ def cleanup(str): #this function cleans up some of the useless html leftovers to
 	str = str.replace("Performing any medical procedures?: FALSE \n" , "")
 	str = str.replace("Parking Needed?: FALSE \n" , "")
 	str = str[0:len(str) - 1]
+	str = str.replace("&rsquo;", "'")
 	return str
 
 class eventException: #this class is just an exception for our use
