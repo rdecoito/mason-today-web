@@ -14,6 +14,7 @@ def cleanup(str): #this function cleans up some of the useless html leftovers to
 	str = str.replace("Performing any medical procedures?: FALSE \n" , "")
 	str = str.replace("Parking Needed?: FALSE \n" , "")
 	str = str[0:len(str) - 1]
+	str = str.replace("&rsquo;", "'")
 	return str
 
 class eventException: #this class is just an exception for our use
@@ -25,8 +26,26 @@ class eventException: #this class is just an exception for our use
 	def __str__(self):
 		return self.__message
 
+def doTheTime(strin):
+	strin = strin.replace(" ", "")
+	strin = strin.split("-")
+	returnlist = ["",""]
+	try:
+		returnlist[1] = convertTime(strin[1])
+	except ValueError:
+		raise eventException(str(strin))
+	if not (strin[0][-2:] == "am") and not (strin[0][-2:] == "pm"):
+		if (strin[1][-2:] == "am"):
+			returnlist[0] = convertTime(strin[0] + "am")
+		else:
+			returnlist[0] = convertTime(strin[0] + "pm")
+	else:
+		returnlist[0] = convertTime(strin[0])
+	return returnlist
+
+#convertTime accepts strings in the form of ""
 def convertTime(stri): #this function is used for splicing the event times.
-	if (stri[-2:] == "pm"): #checks to see if the time presented is pm 
+	if (stri[-2:] == "pm" or stri[-2:] == "PM"): #checks to see if the time presented is pm 
 		if not ((stri[0] == "1") and (stri[1] == "2")): #if the time is pm, then the 12:00 hour is noon and shouldn't get 12 added to it
 				try: #this try block works with the exception handler to add 12 to any pm times
 					stri = stri.replace(stri[0:2], str(int(stri[0:2]) + 12), 1)
@@ -44,7 +63,7 @@ def convertTime(stri): #this function is used for splicing the event times.
 				return (int(stri[0:2])) * 60
 			except:
 				return (int(stri[0])) * 60
-	elif (stri[-2:] == "am"): #checks if the time presented is am, and executes identical code from the pm block, just without adding 12
+	elif (stri[-2:] == "am" or stri[-2:] == "AM"): #checks if the time presented is am, and executes identical code from the pm block, just without adding 12
 		if ":" in stri:
 			try:
 				return (int(stri[0:2]) * 60) + int(stri[3:5])
@@ -255,6 +274,5 @@ def load_data():
 		else:
 			dictlist.append({"id":uniqueid, "error":error})
 	return dictlist
-
 
 #everything in the house is fuzzy, stupid dogs were acting like pollinators, if that's how you even spell it
