@@ -4,6 +4,7 @@
 from bs4 import BeautifulSoup
 import requests
 
+
 # this function cleans up some of the useless html leftovers to characters we can actually use
 def cleanup(dirtystring):
     replacements = [
@@ -22,19 +23,9 @@ def cleanup(dirtystring):
     ]
 
     for replacement in replacements:
-        dirtystring.replace(replacement[0], replacement[1])
+        dirtystring = dirtystring.replace(replacement[0], replacement[1])
 
-    dirtystring = dirtystring[0:len(dirtystring) - 1]
     return dirtystring
-
-
-class eventException:  # this class is just an exception for our use
-
-    def __init__(self, message):
-        self.__message = message
-
-    def __str__(self):
-        return self.__message
 
 
 # convertTime accepts strings in the form of ""
@@ -44,32 +35,32 @@ def convertTime(stri):  # this function is used for splicing the event times.
                 try:  # this try block works with the exception handler to add 12 to any pm times
                     stri = stri.replace(stri[0:2], str(int(stri[0:2]) + 12), 1)
                     # print "I did the first one " + stri
-                except:
+                except Exception:
                     stri = stri.replace(stri[0], str(int(stri[0]) + 12), 1)
                     # print "I did the NOT first one " + stri
         if ":" in stri:  # this if/else reliably converts the time to minutes. accepts either "hour:minute" or simply "hour"
             try:
                 return ((int(stri[0:2])) * 60) + int(stri[3:5])
-            except:
+            except Exception:
                 return ((int(stri[0])) * 60) + int(stri[2:4])
         else:
             try:
                 return (int(stri[0:2])) * 60
-            except:
+            except Exception:
                 return (int(stri[0])) * 60
     elif (stri[-2:] == "am" or stri[-2:] == "AM"):  # checks if the time presented is am, and executes identical code from the pm block, just without adding 12
         if ":" in stri:
             try:
                 return (int(stri[0:2]) * 60) + int(stri[3:5])
-            except:
+            except Exception:
                 return (int(stri[0]) * 60) + int(stri[2:4])
         else:
             try:
                 return int(stri[0:2]) * 60
-            except:
+            except Exception:
                 return int(stri[0]) * 60
     else:
-        raise eventException("This is weird and please don't happen")
+        raise Exception("Issue with time dilation. Input string: " + stri)
 
 
 def load_data():
@@ -164,7 +155,7 @@ def load_data():
                     description = entry_detailes[1] + " " + entry_detailes[2]
                 # this will print if the code has failed to account for something in detailes, but it works as of December 26th 2017
                 else:
-                    raise eventException("failed to account for detail in entry_detailes when date element is index 0 on entry_detailes list")
+                    raise Exception("failed to account for detail in entry_detailes when date element is index 0 on entry_detailes list")
 
             # see (D) above
             elif entry_detailes[1].split(",")[0] in DaysOfWeek:
@@ -186,18 +177,16 @@ def load_data():
                     description = entry_detailes[2] + " " + entry_detailes[3]
                 # this will print if the code has failed to account for something in detailes
                 else:
-                    raise eventException("failed to account for detail in entry_detailes when date element is index 1 on entry_detailes list")
+                    raise Exception("failed to account for detail in entry_detailes when date element is index 1 on entry_detailes list")
             # this will print if the above if statements failed to find the date block
             else:
-                raise eventException("failed to find and account for date element in entry_detailes list")
-        except eventException as e:
+                raise Exception("failed to find and account for date element in entry_detailes list")
+        except Exception as e:
             error.append(str(e))
-        except Exception:
-            error.append("Error intialising event")
 
         try:
             uniqueid = uniqueid[-9:]
-        except:
+        except Exception:
             uniqueid = "Error with getting ID"
 
         try:
@@ -226,18 +215,17 @@ def load_data():
             month = date[0]
             monthday = date[1][:(len(date[1]) - 1)]
             year = date[2]
-        except Exception:
-            error.append("Error with time/date splicing")
+        except Exception as e:
+            error.append(str(e))
 
         try:
             time = time.replace(" ", "")
             time = time.split("-")
-            try:
-                timestop = convertTime(time[1])
-            except ValueError:
-                raise eventException(str(time))
+
+            timestop = convertTime(time[1])
+
             if timestop is None:
-                raise eventException(str(time))
+                raise Exception(str(time))
             if not (time[0][-2:] == "am") and not (time[0][-2:] == "pm"):
                 if (time[1][-2:] == "am"):
                     timestart = convertTime(time[0] + "am")
@@ -245,8 +233,8 @@ def load_data():
                     timestart = convertTime(time[0] + "pm")
             else:
                 timestart = convertTime(time[0])
-        except Exception:
-            error.append("Error with time reformatting")
+        except Exception as e:
+            error.append(str(e))
 
         '''print "-----------------------------------------------------------------------------"
         print location
