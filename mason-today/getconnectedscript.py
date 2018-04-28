@@ -138,8 +138,8 @@ def load_getconn_data():
             else:
                 dictlist.append({"id": uniqueid, "error": str(e)})
         else:
-            dictlist.append("error": "issue in initialization of event.\
-                            check lines 40-56 in getconnectedscript.py")
+            dictlist.append({"error": "issue in initialization of event.\
+                            check lines 40-56 in getconnectedscript.py"})
     return dictlist
 
 # Every event has:
