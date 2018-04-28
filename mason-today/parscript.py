@@ -25,7 +25,7 @@ def cleanup(dirtystring):
     for replacement in replacements:
         dirtystring = dirtystring.replace(replacement[0], replacement[1])
 
-    return dirtystring
+    return dirtystring[:-1]
 
 
 # convertTime accepts strings in the form of ""
@@ -80,7 +80,6 @@ def load_data():
     }
 
     notProvide = "Not Provided"
-    counter = 0
 
     soup = BeautifulSoup(cleanup(requests.get("http://25livepub.collegenet.com/calendars/events_all.xml").text), "lxml")
     # creates a list of all the entry tags from the xml
@@ -89,21 +88,31 @@ def load_data():
 
     for entry in entries:
         error = []
+        try:
+            uniqueid = entry.id.text
+            uniqueid = uniqueid[-9:]
+        except Exception:
+            uniqueid = "Error with getting ID"
+
         # pulls up an entries in the list of entries, finds the title tag and .text deletes all xml tags and returns just the text as a string
-        entry_title = entry.title.text
+        try:
+            entry_title = entry.title.text
 
-        entry_content = entry.content.text
-        uniqueid = entry.id.text
+            entry_content = entry.content.text
 
-        # makes it easy to find as things may be unevenly spaced
-        entry_content = entry_content.replace("\n\n\n", "\n")
-        entry_content = entry_content.replace("\n\n", "\n")
+            # makes it easy to find as things may be unevenly spaced
+            entry_content = entry_content.replace("\n\n\n", "\n")
+            entry_content = entry_content.replace("\n\n", "\n")
 
-        # check clearcontent function
-        entry_content = cleanup(entry_content)  # we might just get rid of this one
+            # check clearcontent function
+            entry_content = cleanup(entry_content)  # we might just get rid of this one
 
-        # each piece of content may is seperated by a newline, entry_detailes creates a list
-        entry_detailes = entry_content.split("\n")
+            # each piece of content may is seperated by a newline, entry_detailes creates a list
+            entry_detailes = entry_content.split("\n")
+        except Exception as e:
+            error.append(str(e))
+            dictlist.append({"id": uniqueid, "error": error})
+            continue
 
         # in entry detailes list normally the conditions go as follow
         # [0] is the location
@@ -185,11 +194,6 @@ def load_data():
             error.append(str(e))
 
         try:
-            uniqueid = uniqueid[-9:]
-        except Exception:
-            uniqueid = "Error with getting ID"
-
-        try:
             if location != notProvide:
                 location = location[:-1]
                 location += ", "
@@ -204,7 +208,7 @@ def load_data():
             else:
                 location = [location]
         except Exception:
-            error.append("Error with location")
+            error.append("Location Error: " + str(e))
 
         try:
             date = date.split(",")
@@ -216,7 +220,7 @@ def load_data():
             monthday = date[1][:(len(date[1]) - 1)]
             year = date[2]
         except Exception as e:
-            error.append(str(e))
+            error.append("Date Error: " + str(e))
 
         try:
             time = time.replace(" ", "")
@@ -234,7 +238,7 @@ def load_data():
             else:
                 timestart = convertTime(time[0])
         except Exception as e:
-            error.append(str(e))
+            error.append("Time Dilation Error: " + str(e))
 
         '''print "-----------------------------------------------------------------------------"
         print location
