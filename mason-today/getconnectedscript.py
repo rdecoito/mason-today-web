@@ -34,9 +34,9 @@ def load_getconn_data():
     feed = feedparser.parse(feedtext)
 
     dictlist = []
-    error = []
 
     for entry in feed.entries:
+        error = []
         # this collects the attributes which are always there
         # also creates the Soup and sets up for the rest of the parsing
         try:
@@ -61,7 +61,7 @@ def load_getconn_data():
             error.append(str(e))
 
         # this handles events which start and end on the same day
-        # if we've found an error, there's not point in continuing
+        # if we've found an error, there's no point in continuing
         if (datetime.count("(") == 1) and (error == []):
             # parses out date info
             try:
@@ -140,7 +140,6 @@ def load_getconn_data():
         else:
             dictlist.append("error": "issue in initialization of event.\
                             check lines 40-56 in getconnectedscript.py")
-
     return dictlist
 
 # Every event has:
