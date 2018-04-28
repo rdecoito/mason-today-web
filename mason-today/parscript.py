@@ -25,7 +25,7 @@ def cleanup(dirtystring):
         dirtystring.replace(replacement[0], replacement[1])
 
     dirtystring = dirtystring[0:len(dirtystring) - 1]
-    return str
+    return dirtystring
 
 
 class eventException:  # this class is just an exception for our use
