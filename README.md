@@ -1,6 +1,6 @@
 Mason Today Web is a shitty version of the Mason Today project. It will be the conglomeration of 2 horrible programmings trying their damnedest to write functioning code.
 
-Currently, the parscript's data is hosted at `masontoday.zosman.com`
+Currently, the parscript's data is hosted at `masontoday.gmu.io`
 
 Please refer to the requirements.txt for information on what packages to install to properly run the program.
 
