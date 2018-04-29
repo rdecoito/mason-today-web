@@ -70,7 +70,7 @@ def load_getconn_data():
                 temp = datesplit[1].split(" ")
                 monthday = temp[1]
                 month = temp[0]
-                year = datesplit[2][:5]
+                year = datesplit[2].split(" ")[0]
             except Exception as e:
                 error.append(str(e))
 
