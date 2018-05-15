@@ -32,16 +32,18 @@ def qualityTest(desc):
     # none, bad, okay, good
     length = len(desc)
 
-    if length < 10:
+    if desc == "Not Provided":
         return "none"
-    elif length < 40:
+    elif length < 10:
         return "bad"
-    elif length < 80:
+    elif length < 40:
         return "okay"
-    elif length < 100:
+    elif length < 80:
         return "good"
+    elif length < 100:
+        return "verygood"
     else: 
-        return "?"
+        return "excellent"
 
 # convertTime accepts strings in the form of ""
 def convertTime(stri):  # this function is used for splicing the event times.
