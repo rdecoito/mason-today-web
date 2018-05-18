@@ -10,8 +10,15 @@ from getconnectedscript import load_getconn_data
 # python imports
 import json
 
+# other imports
+import redis
+from redisactions import *
+
+# setting up flask instance
 app = Flask(__name__)
 
+# setting up redis database
+redisdb = redis.from_url("redis://localhost:6379/0", db=0)
 
 @app.route("/")
 def display_default():
@@ -21,15 +28,15 @@ def display_default():
 
 @app.route("/api/25live")
 def display_data():
-    resp = Response(json.dumps(load_data(), ensure_ascii=False)
-                    .encode('utf-8'))
+    livedbfill(json.dumps(load_data(), ensure_ascii=False))
+    resp = Response(redisdb.get("livedict")) # .encode('utf-8'))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
 
 
 @app.route("/api/getconnected")
 def display_GC_data():
-    resp = Response(json.dumps(load_getconn_data(), ensure_ascii=False)
-                    .encode('utf-8'))
+    gcdbfill(json.dumps(load_getconn_data(), ensure_ascii=False))
+    resp = Response(redisdb.get("gcdict")) # .encode('utf-8'))
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
