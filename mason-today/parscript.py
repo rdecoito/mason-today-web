@@ -26,7 +26,24 @@ def cleanup(dirtystring):
         dirtystring = dirtystring.replace(replacement[0], replacement[1])
 
     return dirtystring[:-1]
+    
+# Simple event quality test
+def qualityTest(desc):
+    # none, bad, okay, good
+    length = len(desc)
 
+    if desc == "Not Provided":
+        return "none"
+    elif length < 10:
+        return "bad"
+    elif length < 40:
+        return "okay"
+    elif length < 80:
+        return "good"
+    elif length < 100:
+        return "verygood"
+    else: 
+        return "excellent"
 
 # convertTime accepts strings in the form of ""
 def convertTime(stri):  # this function is used for splicing the event times.
@@ -251,9 +268,10 @@ def load_data():
         print description
         print "----------------------------------------------------------------------------"
         '''
-
         if (error == []):
-            dictlist.append({"id": uniqueid, "title": entry_title, "dayofweek": day, "dayofmonth": monthday, "month": month, "year": year, "timestart": timestart, "timestop": timestop, "location": location, "description": description})
+            quality = qualityTest(description)
+            dictlist.append({"id": uniqueid, "quality": quality, "title": entry_title, "dayofweek": day, "dayofmonth": monthday, "month": month,
+             "year": year, "timestart": timestart, "timestop": timestop, "location": location, "description": description})
         else:
             dictlist.append({"id": uniqueid, "error": error})
     return dictlist
