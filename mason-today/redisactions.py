@@ -9,11 +9,11 @@ from __init__ import redisdb
 # use rpush(key, value) to append a dblist (rpushx() to check if it exists)
 # use del(key) to remove a k-v
 
-# so we everytime we run parscript or gcscript we want to run a dbfill()
+# so everytime we run parscript or gcscript we want to run a dbfill()
 # function. and every time we find an error we want to run a dberrorfill()
 # function.
 
-# this will update the 
+# this will update the live dictlist and the cachedate
 # returns true if the dictlist is not empty, false otherwise
 def gcdbfill(dictlist):
     try:
@@ -21,20 +21,22 @@ def gcdbfill(dictlist):
     except e:
         return False
 
-    if redisdb.get("gcdict") is not None:
-        return True
-    else:
-        return False
+    return redisdb.get("gcdict") is not None
 
 # saves new dictlist in place of previous 25Live dictlist
-# returns true if the dictlist is empty, false otherwise
+# returns true if the dictlist is not empty, false otherwise
 def livedbfill(dictlist):
     try:
         redisdb.set("livedict", dictlist)
     except e:
         return False
         
-    if redisdb.get("livedict") is not None:
-        return True
-    else:
+    return redisdb.get("livedict") is not None
+
+# saves the last time the cache was updated
+# return true if the cachedate is not empty, false otherwise
+def setlastcachedate(cache, date):
+    try:
+        redisdb.set(cache, date)
+    except e:
         return False
