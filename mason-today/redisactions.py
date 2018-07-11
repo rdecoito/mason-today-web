@@ -1,3 +1,6 @@
+# python imports
+import datetime
+
 # third party imports
 import redis
 from __init__ import redisdb
@@ -18,6 +21,7 @@ from __init__ import redisdb
 def gcdbfill(dictlist):
     try:
         redisdb.set("gcdict", dictlist)
+        setlastcachedate("gccachedate", str(datetime.datetime.now()))
     except e:
         return False
 
@@ -28,6 +32,7 @@ def gcdbfill(dictlist):
 def livedbfill(dictlist):
     try:
         redisdb.set("livedict", dictlist)
+        setlastcachedate("livecachedate", str(datetime.datetime.now()))
     except e:
         return False
         
@@ -40,3 +45,5 @@ def setlastcachedate(cache, date):
         redisdb.set(cache, date)
     except e:
         return False
+
+    return redisdb.get(cache) is not None
