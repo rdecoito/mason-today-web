@@ -1,9 +1,11 @@
+# app imports
+from __init__ import redisdb
+
 # python imports
 import datetime
 
-# third party imports
+# other imports
 import redis
-from __init__ import redisdb
 
 # I'm thinking we store a couple things
 # first: a key-value where the value is the dictlist
@@ -16,6 +18,7 @@ from __init__ import redisdb
 # function. and every time we find an error we want to run a dberrorfill()
 # function.
 
+
 # this will update the live dictlist and the cachedate
 # returns true if the dictlist is not empty, false otherwise
 def gcdbfill(dictlist):
@@ -27,6 +30,7 @@ def gcdbfill(dictlist):
 
     return redisdb.get("gcdict") is not None
 
+
 # saves new dictlist in place of previous 25Live dictlist
 # returns true if the dictlist is not empty, false otherwise
 def livedbfill(dictlist):
@@ -35,8 +39,9 @@ def livedbfill(dictlist):
         setlastcachedate("livecachedate", str(datetime.datetime.now()))
     except e:
         return False
-        
+
     return redisdb.get("livedict") is not None
+
 
 # saves the last time the cache was updated
 # return true if the cachedate is not empty, false otherwise
