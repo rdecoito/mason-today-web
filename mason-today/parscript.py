@@ -313,4 +313,4 @@ def load_data():
     return filter_data_into_days(dictlist)
 
 # everything in the house is fuzzy, stupid dogs were acting like pollinators, if that's how you even spell it
-load_data()
+
