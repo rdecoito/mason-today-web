@@ -79,6 +79,41 @@ def convertTime(stri):  # this function is used for splicing the event times.
     else:
         raise Exception("Issue with time dilation. Input string: " + stri)
 
+def filter_data_into_days(dictlist):
+    new_dictlist = {}
+    date_reference = ""
+    for event in dictlist:
+        if "error" in event: 
+            continue
+        
+        event_date = event["dayofmonth"] + "/" +  str(month_to_number(event["month"])) + "/" + event["year"]
+        if event_date in new_dictlist:
+            new_dictlist[event_date].append(event)
+        else: 
+            new_dictlist[event_date] = [event]
+    return new_dictlist
+            
+
+def month_to_number(month):
+    month_dict = {
+        "January": 1,
+        "Febuary": 2,
+        "March": 3,
+        "April": 4,
+        "May": 5,
+        "June": 6,
+        "July": 7,
+        "August": 8,
+        "September": 9,
+        "October": 10,
+        "November": 11,
+        "December": 12
+    }
+    try: 
+        out = month_dict[month]
+        return out
+    except: 
+        raise Exception("Invalid month to convert to number")
 
 def load_data():
     """
@@ -257,23 +292,25 @@ def load_data():
         except Exception as e:
             error.append("Time Dilation Error: " + str(e))
 
-        '''print "-----------------------------------------------------------------------------"
-        print location
-        print day
-        print month
-        print monthday
-        print year
-        print timestart
-        print timestop
-        print description
-        print "----------------------------------------------------------------------------"
-        '''
+        # print "-----------------------------------------------------------------------------"
+        # print location
+        # print day
+        # print month
+        # print monthday
+        # print year
+        # print timestart
+        # print timestop
+        # print description
+        # print "----------------------------------------------------------------------------"
+
         if (error == []):
             quality = qualityTest(description)
             dictlist.append({"id": uniqueid, "quality": quality, "title": entry_title, "dayofweek": day, "dayofmonth": monthday, "month": month,
              "year": year, "timestart": timestart, "timestop": timestop, "location": location, "description": description})
         else:
             dictlist.append({"id": uniqueid, "error": error})
-    return dictlist
+    
+    return filter_data_into_days(dictlist)
 
 # everything in the house is fuzzy, stupid dogs were acting like pollinators, if that's how you even spell it
+load_data()
