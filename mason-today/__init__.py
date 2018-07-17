@@ -9,11 +9,12 @@ from redisactions import redisdb
 
 # python imports
 import json
+# import time
 
 # other imports
 import redis
 import schedule
-import time
+
 
 # setting up flask instance
 app = Flask(__name__)
@@ -42,8 +43,20 @@ def display_GC_data():
     resp.headers['Content-Type'] = 'application/json; charset=utf-8'
     return resp
 
+
+@app.route("/updatedbs")
+def updateroute():
+    return Response(updatebothdbs().replace("\n","</br>"))
+
+
+def shutdown():
+    runScheduler = False
+    request.environ.get('werkzeug.server.shutdown')
+
+
 # this needs to be uncommented in order for the scheduler to work
 # but it's being weird cause it's hogging the thread
-# while True:
+# runScheduler = True
+# while runScheduler:
     # schedule.run_pending()
     # time.sleep(5)
