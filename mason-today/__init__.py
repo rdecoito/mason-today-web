@@ -4,24 +4,19 @@ from flask import Response
 from flask import render_template
 
 # app imports
-from appmethods import updatebothdbs
+from appmethods import updatebothdbs, runscheduleloop
 from redisactions import redisdb
 
 # python imports
 import json
-# import time
+import thread
 
 # other imports
 import redis
-import schedule
 
 
 # setting up flask instance
 app = Flask(__name__)
-
-# setting up cacheing
-schedule.every().day.at("02:00").do(updatebothdbs)
-# schedule.every(5).seconds.do(updatebothdbs)
 
 
 @app.route("/")
@@ -44,19 +39,16 @@ def display_GC_data():
     return resp
 
 
-@app.route("/updatedbs")
-def updateroute():
-    return Response(updatebothdbs().replace("\n","</br>"))
+@app.route("/api/lastupdate")
+def getlastupdate():
+    resp = Response(redisdb.lindex("dbupdatelog", 0).replace("\n", "</br>"))
+    return resp
 
 
-def shutdown():
-    runScheduler = False
-    request.environ.get('werkzeug.server.shutdown')
-
-
-# this needs to be uncommented in order for the scheduler to work
-# but it's being weird cause it's hogging the thread
-# runScheduler = True
-# while runScheduler:
-    # schedule.run_pending()
-    # time.sleep(5)
+try:
+    thread.start_new_thread(runscheduleloop, ())
+    print "started thread!"
+except:
+    print "===================================================" \
+        + "Unable to start scheduling thread" \
+        + "==================================================="

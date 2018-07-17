@@ -18,6 +18,7 @@ import redis
 # setting up redis database
 redisdb = redis.from_url("redis://localhost:6379/0", db=0)
 
+
 # this will update the live dictlist and the cachedate
 # returns true if the dictlist is not empty, false otherwise
 def gcdbfill(dictlist):
@@ -47,4 +48,4 @@ def livedbfill(dictlist):
 def appendtoupdatelog(logstring):
     redisdb.lpush("dbupdatelog", logstring)
 
-    return redisdb.lrange("dbupdatelog", 0, 0) == logstring
+    return redisdb.lindex("dbupdatelog", 0) == logstring
