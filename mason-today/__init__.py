@@ -4,10 +4,8 @@ from flask import Response
 from flask import render_template
 
 # app imports
-from parscript import load_data
-from getconnectedscript import load_getconn_data
-from redisactions import *
-from appmethods import *
+from appmethods import updatebothdbs
+from redisactions import redisdb
 
 # python imports
 import json
@@ -19,9 +17,6 @@ import time
 
 # setting up flask instance
 app = Flask(__name__)
-
-# setting up redis database
-redisdb = redis.from_url("redis://localhost:6379/0", db=0)
 
 # setting up cacheing
 schedule.every().day.at("02:00").do(updatebothdbs)

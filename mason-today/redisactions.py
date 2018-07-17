@@ -1,6 +1,3 @@
-# app imports
-from __init__ import redisdb
-
 # python imports
 import datetime
 
@@ -18,37 +15,36 @@ import redis
 # function. and every time we find an error we want to run a dberrorfill()
 # function.
 
+# setting up redis database
+redisdb = redis.from_url("redis://localhost:6379/0", db=0)
 
 # this will update the live dictlist and the cachedate
 # returns true if the dictlist is not empty, false otherwise
 def gcdbfill(dictlist):
-    try:
-        redisdb.set("gcdict", dictlist)
-        setlastcachedate("gccachedate", str(datetime.datetime.now()))
-    except e:
-        return False
+    success = redisdb.set("gcdict", dictlist)
 
-    return redisdb.get("gcdict") is not None
+    log = str(datetime.datetime.now())
+    redisdb.set("gccachedate", log)
+    success = redisdb.get("gccachedate") == log and success
+
+    return redisdb.get("gcdict") is not None and success
 
 
 # saves new dictlist in place of previous 25Live dictlist
 # returns true if the dictlist is not empty, false otherwise
 def livedbfill(dictlist):
-    try:
-        redisdb.set("livedict", dictlist)
-        setlastcachedate("livecachedate", str(datetime.datetime.now()))
-    except e:
-        return False
+    success = redisdb.set("livedict", dictlist)
 
-    return redisdb.get("livedict") is not None
+    log = str(datetime.datetime.now())
+    redisdb.set("livecachedate", log)
+    success = redisdb.get("livecachedate") == log and success
+
+    return redisdb.get("livedict") is not None and success
 
 
-# saves the last time the cache was updated
-# return true if the cachedate is not empty, false otherwise
-def setlastcachedate(cache, date):
-    try:
-        redisdb.set(cache, date)
-    except e:
-        return False
+# appends the log string to the head of our update long
+# returns true if the head is the newest update
+def appendtoupdatelog(logstring):
+    redisdb.lpush("dbupdatelog", logstring)
 
-    return redisdb.get(cache) is not None
+    return redisdb.lrange("dbupdatelog", 0, 0) == logstring
