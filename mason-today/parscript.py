@@ -106,12 +106,12 @@ def filter_data_into_days(dictlist):
                                        _MONTH_DICT[event["month"]],
                                        event["year"])
         if event_date in day_dict:
-            day_dict[event_date]["events"].append(event)
+            day_dict[event_date]["data"].append(event)
         else:
             timestamp = datetime(
                 int(event["year"]), _MONTH_DICT[event["month"]], int(event["dayofmonth"]))
             day_dict[event_date] = {
-                "date": event_date, "datetime": timestamp.isoformat(' '), "data": [event]}
+                "date": event_date, "datetime": timestamp.isoformat(' '), "year": event["year"], "month": event["month"], "dayofmonth": event["dayofmonth"], "data": [event]}
     day_list = [
         day_dict[day]
         for day in day_dict
