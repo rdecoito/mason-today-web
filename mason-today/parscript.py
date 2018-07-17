@@ -4,6 +4,8 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
 import requests
+import collections
+
 
 _MONTH_DICT = {
     "January": 1,
@@ -95,7 +97,7 @@ def convertTime(stri):  # this function is used for splicing the event times.
         raise Exception("Issue with time dilation. Input string: " + stri)
 
 def filter_data_into_days(dictlist):
-    day_dict = {}
+    day_dict = collections.OrderedDict()
     for event in dictlist:
         if "error" in event:
             continue
