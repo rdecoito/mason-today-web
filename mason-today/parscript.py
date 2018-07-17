@@ -94,19 +94,21 @@ def convertTime(stri):  # this function is used for splicing the event times.
         raise Exception("Issue with time dilation. Input string: " + stri)
 
 def filter_data_into_days(dictlist):
-    new_dictlist = {}
+    day_dict = {}
     for event in dictlist:
         if "error" in event:
             continue
-
         event_date = "{}/{}/{}".format(event["dayofmonth"],
                                        _MONTH_DICT[event["month"]],
                                        event["year"])
-        if event_date in new_dictlist:
-            new_dictlist[event_date].append(event)
+        if event_date in day_dict:
+            day_dict[event_date]["events"].append(event)
         else:
-            new_dictlist[event_date] = [event]
-    return new_dictlist
+            day_dict[event_date] = {"date": event_date, "events": [event]}
+    day_list = []
+    for day in day_dict:
+        day_list.append(day_dict[day])
+    return day_list
 
 def load_data():
     """
