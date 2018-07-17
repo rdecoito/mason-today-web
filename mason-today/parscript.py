@@ -96,6 +96,7 @@ def convertTime(stri):  # this function is used for splicing the event times.
     else:
         raise Exception("Issue with time dilation. Input string: " + stri)
 
+
 def filter_data_into_days(dictlist):
     day_dict = collections.OrderedDict()
     for event in dictlist:
@@ -107,11 +108,14 @@ def filter_data_into_days(dictlist):
         if event_date in day_dict:
             day_dict[event_date]["events"].append(event)
         else:
-            _datetime = datetime(int(event["year"]), _MONTH_DICT[event["month"]], int(event["dayofmonth"]))
-            day_dict[event_date] = {"date": event_date, "datetime": _datetime.isoformat(' '), "events": [event]}
-    day_list = []
-    for day in day_dict:
-        day_list.append(day_dict[day])
+            timestamp = datetime(
+                int(event["year"]), _MONTH_DICT[event["month"]], int(event["dayofmonth"]))
+            day_dict[event_date] = {
+                "date": event_date, "datetime": timestamp.isoformat(' '), "events": [event]}
+    day_list = [
+        day_dict[day]
+        for day in day_dict
+    ]
     return day_list
 
 def load_data():
