@@ -2,6 +2,7 @@
 
 # third party imports
 from bs4 import BeautifulSoup
+from datetime import datetime
 import requests
 
 _MONTH_DICT = {
@@ -104,7 +105,8 @@ def filter_data_into_days(dictlist):
         if event_date in day_dict:
             day_dict[event_date]["events"].append(event)
         else:
-            day_dict[event_date] = {"date": event_date, "events": [event]}
+            _datetime = datetime(int(event["year"]), _MONTH_DICT[event["month"]], int(event["dayofmonth"]))
+            day_dict[event_date] = {"date": event_date, "datetime": _datetime.isoformat(' '), "events": [event]}
     day_list = []
     for day in day_dict:
         day_list.append(day_dict[day])
