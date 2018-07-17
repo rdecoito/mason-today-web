@@ -2,8 +2,25 @@
 
 # third party imports
 from bs4 import BeautifulSoup
+from datetime import datetime
 import requests
+import collections
 
+
+_MONTH_DICT = {
+    "January": 1,
+    "Febuary": 2,
+    "March": 3,
+    "April": 4,
+    "May": 5,
+    "June": 6,
+    "July": 7,
+    "August": 8,
+    "September": 9,
+    "October": 10,
+    "November": 11,
+    "December": 12
+}
 
 # this function cleans up some of the useless html leftovers to characters we can actually use
 def cleanup(dirtystring):
@@ -26,7 +43,7 @@ def cleanup(dirtystring):
         dirtystring = dirtystring.replace(replacement[0], replacement[1])
 
     return dirtystring[:-1]
-    
+
 # Simple event quality test
 def qualityTest(desc):
     # none, bad, okay, good
@@ -42,7 +59,7 @@ def qualityTest(desc):
         return "good"
     elif length < 100:
         return "verygood"
-    else: 
+    else:
         return "excellent"
 
 # convertTime accepts strings in the form of ""
@@ -79,6 +96,27 @@ def convertTime(stri):  # this function is used for splicing the event times.
     else:
         raise Exception("Issue with time dilation. Input string: " + stri)
 
+
+def filter_data_into_days(dictlist):
+    day_dict = collections.OrderedDict()
+    for event in dictlist:
+        if "error" in event:
+            continue
+        event_date = "{}/{}/{}".format(event["dayofmonth"],
+                                       _MONTH_DICT[event["month"]],
+                                       event["year"])
+        if event_date in day_dict:
+            day_dict[event_date]["data"].append(event)
+        else:
+            timestamp = datetime(
+                int(event["year"]), _MONTH_DICT[event["month"]], int(event["dayofmonth"]))
+            day_dict[event_date] = {
+                "date": event_date, "datetime": timestamp.isoformat(' '), "year": event["year"], "month": event["month"], "dayofmonth": event["dayofmonth"], "data": [event]}
+    day_list = [
+        day_dict[day]
+        for day in day_dict
+    ]
+    return day_list
 
 def load_data():
     """
@@ -257,23 +295,25 @@ def load_data():
         except Exception as e:
             error.append("Time Dilation Error: " + str(e))
 
-        '''print "-----------------------------------------------------------------------------"
-        print location
-        print day
-        print month
-        print monthday
-        print year
-        print timestart
-        print timestop
-        print description
-        print "----------------------------------------------------------------------------"
-        '''
+        # print "-----------------------------------------------------------------------------"
+        # print location
+        # print day
+        # print month
+        # print monthday
+        # print year
+        # print timestart
+        # print timestop
+        # print description
+        # print "----------------------------------------------------------------------------"
+
         if (error == []):
             quality = qualityTest(description)
             dictlist.append({"id": uniqueid, "quality": quality, "title": entry_title, "dayofweek": day, "dayofmonth": monthday, "month": month,
              "year": year, "timestart": timestart, "timestop": timestop, "location": location, "description": description})
         else:
             dictlist.append({"id": uniqueid, "error": error})
-    return dictlist
+
+    return filter_data_into_days(dictlist)
 
 # everything in the house is fuzzy, stupid dogs were acting like pollinators, if that's how you even spell it
+
