@@ -4,7 +4,7 @@ from flask import Response
 from flask import render_template
 
 # app imports
-from appmethods import updatebothdbs, runscheduleloop
+from appmethods import update_both_dbs, run_schedule_loop
 from redisactions import redisdb
 
 # python imports
@@ -40,13 +40,13 @@ def display_GC_data():
 
 
 @app.route("/api/lastupdate")
-def getlastupdate():
+def get_last_update():
     resp = Response(redisdb.lindex("dbupdatelog", 0).replace("\n", "</br>"))
     return resp
 
 
 try:
-    thread.start_new_thread(runscheduleloop, ())
+    thread.start_new_thread(run_schedule_loop, ())
     print "started thread!"
 except:
     print "===================================================" \

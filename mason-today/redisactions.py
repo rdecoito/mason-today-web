@@ -15,13 +15,14 @@ import redis
 # function. and every time we find an error we want to run a dberrorfill()
 # function.
 
+
 # setting up redis database
 redisdb = redis.from_url("redis://localhost:6379/0", db=0)
 
 
 # this will update the live dictlist and the cachedate
 # returns true if the dictlist is not empty, false otherwise
-def gcdbfill(dictlist):
+def gc_db_fill(dictlist):
     success = redisdb.set("gcdict", dictlist)
 
     log = str(datetime.datetime.now())
@@ -33,7 +34,7 @@ def gcdbfill(dictlist):
 
 # saves new dictlist in place of previous 25Live dictlist
 # returns true if the dictlist is not empty, false otherwise
-def livedbfill(dictlist):
+def live_db_fill(dictlist):
     success = redisdb.set("livedict", dictlist)
 
     log = str(datetime.datetime.now())
@@ -45,7 +46,7 @@ def livedbfill(dictlist):
 
 # appends the log string to the head of our update long
 # returns true if the head is the newest update
-def appendtoupdatelog(logstring):
+def append_to_update_log(logstring):
     redisdb.lpush("dbupdatelog", logstring)
 
     return redisdb.lindex("dbupdatelog", 0) == logstring
