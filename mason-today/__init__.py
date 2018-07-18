@@ -45,6 +45,9 @@ def get_last_update():
     return resp
 
 
+# make sure the cacheing is set up on init
+update_both_dbs()
+
 try:
     thread.start_new_thread(run_schedule_loop, ())
     print "started thread!"
