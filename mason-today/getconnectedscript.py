@@ -25,7 +25,7 @@ def splitAndConvertTime(strin):
     return returnlist
 
 
-def load_getconn_data():
+def load_gc_data():
     feedtext = requests.get(
             "https://getconnected.gmu.edu/events/events.rss").text
     feedtext = cleanup(feedtext)
