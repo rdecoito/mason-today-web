@@ -262,7 +262,7 @@ def load_data():
                 del location[-1]
             else:
                 location = [location]
-        except Exception:
+        except Exception as e:
             error.append("Location Error: " + str(e))
 
         try:

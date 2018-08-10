@@ -4,13 +4,12 @@ from flask import Response
 from flask import render_template
 
 # app imports
-from appmethods import update_both_dbs, run_schedule_loop
-from redisactions import redisdb
+from .appmethods import update_both_dbs, run_schedule_loop
+from .redisactions import redisdb
 from multiprocessing import Process
 
 # python imports
 import json
-import thread
 
 # other imports
 import redis
@@ -56,8 +55,6 @@ try:
     print("Process Started!")
 
 except Exception as e:
-    print(e)
-    print "===================================================" \
-        + "Unable to start scheduling thread" \
-        + traceback.print_exc(file=sys.stdout) \
-        + "==================================================="
+    print(("=================================================== Unable to start scheduling thread\n" \
+        + str(e)+ \
+        "\n==================================================="))

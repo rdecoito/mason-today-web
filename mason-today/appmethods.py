@@ -1,7 +1,7 @@
 # app imports
-from parscript import load_data
-from getconnectedscript import load_gc_data
-import redisactions as f
+from .parscript import load_data
+from .getconnectedscript import load_gc_data
+from . import redisactions as f
 
 # python imports
 import json

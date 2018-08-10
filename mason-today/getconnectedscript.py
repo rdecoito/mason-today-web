@@ -1,5 +1,5 @@
 # app imports
-from parscript import cleanup, convertTime
+from .parscript import cleanup, convertTime
 
 # third party imports
 import feedparser
@@ -34,6 +34,7 @@ def load_gc_data():
     feed = feedparser.parse(feedtext)
 
     dictlist = []
+    datetime = ""
 
     for entry in feed.entries:
         error = []
