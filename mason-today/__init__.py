@@ -6,6 +6,7 @@ from flask import render_template
 # app imports
 from appmethods import update_both_dbs, run_schedule_loop
 from redisactions import redisdb
+from multiprocessing import Process
 
 # python imports
 import json
@@ -45,13 +46,18 @@ def get_last_update():
     return resp
 
 
-# make sure the cacheing is set up on init
-update_both_dbs()
 
+# make sure the cacheing is set up on init
 try:
-    thread.start_new_thread(run_schedule_loop, ())
-    print "started thread!"
-except:
+    pUpdate = Process(target = update_both_dbs, args = ())
+    pSchedule = Process(target = run_schedule_loop, args = ())
+    pSchedule.start()
+    pUpdate.start() 
+    print("Process Started!")
+
+except Exception as e:
+    print(e)
     print "===================================================" \
         + "Unable to start scheduling thread" \
+        + traceback.print_exc(file=sys.stdout) \
         + "==================================================="
