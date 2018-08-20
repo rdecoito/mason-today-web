@@ -6,8 +6,6 @@ import feedparser
 from bs4 import BeautifulSoup
 import requests
 
-# DEV REMINDER: CHANGE THE LINES IN INTIALISATION ERROR MESSAGE (LINE 138)
-
 
 def splitAndConvertTime(strin):
     strin = strin.replace(" ", "")
@@ -34,7 +32,6 @@ def load_gc_data():
     feed = feedparser.parse(feedtext)
 
     dictlist = []
-    datetime = ""
 
     for entry in feed.entries:
         error = []
@@ -60,6 +57,8 @@ def load_gc_data():
             # print datetime
         except Exception as e:
             error.append(str(e))
+            dictlist.append({"error": error})
+            continue
 
         # this handles events which start and end on the same day
         # if we've found an error, there's no point in continuing
@@ -139,8 +138,7 @@ def load_gc_data():
             else:
                 dictlist.append({"id": uniqueid, "error": str(e)})
         else:
-            dictlist.append({"error": "issue in initialization of event.\
-                            check lines 40-56 in getconnectedscript.py"})
+            dictlist.append({"error": error})
     return dictlist
 
 # Every event has:
